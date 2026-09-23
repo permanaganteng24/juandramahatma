@@ -1,0 +1,6 @@
+{
+  "name": "Undangan Aqiqah & Khitan Juanda",
+  "description": "Undangan Digital Tasyakuran Walimatul 'Aqiqah & Khitan Muhamad Juandra Mahatma. Putra dari Bapak Bayu Mahatma Saputra & Ibu Linda Ismiyati Lestari.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
