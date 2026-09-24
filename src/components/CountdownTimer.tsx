@@ -13,7 +13,7 @@ interface TimeLeft {
 export const CountdownTimer: React.FC = () => {
   const { db } = useAppData();
 
-  const targetIso = db.event.targetIsoDate || '2026-09-27T09:00:00+08:00';
+  const targetIso = db.event.targetIsoDate || '2026-09-27T10:00:00+08:00';
   const targetDate = new Date(targetIso).getTime();
 
   const calculateTimeLeft = (): TimeLeft => {

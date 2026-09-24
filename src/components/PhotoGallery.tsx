@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Camera, Maximize2, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAppData } from '../context/AppDataContext';
+import defaultFallbackPhoto from '../assets/images/juandra_white_koko_1790146608476.jpg';
 
 export const PhotoGallery: React.FC = () => {
   const { db } = useAppData();
@@ -45,6 +46,9 @@ export const PhotoGallery: React.FC = () => {
               src={item.src}
               alt={item.title}
               referrerPolicy="no-referrer"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = defaultFallbackPhoto;
+              }}
               className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3 text-white">
@@ -113,6 +117,9 @@ export const PhotoGallery: React.FC = () => {
               src={photos[activePhotoIdx].src}
               alt={photos[activePhotoIdx].title}
               referrerPolicy="no-referrer"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = defaultFallbackPhoto;
+              }}
               className="max-h-[65vh] w-auto max-w-full rounded-2xl object-contain shadow-2xl border-2 border-white/20"
             />
             <div className="mt-4 text-center text-white">

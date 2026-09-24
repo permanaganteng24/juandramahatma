@@ -3,6 +3,7 @@ import { MailOpen, Sparkles, Heart, Star, Calendar, MapPin, ChevronLeft, Chevron
 import { useAppData } from '../context/AppDataContext';
 import { bgMusicPlayer } from '../utils/audio';
 import { triggerOpenEnvelopeConfetti } from '../utils/confetti';
+import defaultFallbackPhoto from '../assets/images/juandra_white_koko_1790146608476.jpg';
 
 interface CoverEnvelopeProps {
   guestName: string;
@@ -86,6 +87,9 @@ export const CoverEnvelope: React.FC<CoverEnvelopeProps> = ({ guestName, onOpen,
                   src={photo.src}
                   alt={photo.alt || photo.label}
                   referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = defaultFallbackPhoto;
+                  }}
                   className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-700 ease-in-out ${
                     activePhotoIndex === index ? 'opacity-100 scale-100' : 'opacity-0 scale-105 pointer-events-none'
                   }`}

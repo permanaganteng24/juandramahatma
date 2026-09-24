@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Star, Heart, ChevronLeft, ChevronRight, Image as ImageIcon } from 'lucide-react';
 import { useAppData } from '../context/AppDataContext';
+import defaultFallbackPhoto from '../assets/images/juandra_white_koko_1790146608476.jpg';
 
 export const HeroSection: React.FC = () => {
   const { db } = useAppData();
@@ -59,6 +60,9 @@ export const HeroSection: React.FC = () => {
                 src={photo.src}
                 alt={photo.alt || photo.label}
                 referrerPolicy="no-referrer"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = defaultFallbackPhoto;
+                }}
                 className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-700 ease-in-out ${
                   activePhotoIndex === index ? 'opacity-100 scale-100' : 'opacity-0 scale-105 pointer-events-none'
                 }`}

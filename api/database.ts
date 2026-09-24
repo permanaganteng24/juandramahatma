@@ -42,13 +42,16 @@ export default async function handler(req: any, res: any) {
       }
     }
 
-    // 2. Return memory storage if present
+    // 2. Return memory storage if present (and not containing obsolete /uploads/ paths)
     if (inMemoryStorage) {
-      return res.status(200).json({
-        success: true,
-        source: 'vercel-memory',
-        data: inMemoryStorage,
-      });
+      const str = JSON.stringify(inMemoryStorage);
+      if (!str.includes('/uploads/')) {
+        return res.status(200).json({
+          success: true,
+          source: 'vercel-memory',
+          data: inMemoryStorage,
+        });
+      }
     }
 
     return res.status(200).json({

@@ -7,15 +7,15 @@ export const EVENT_DETAILS = {
   babyName: "Muhamad Juandra Mahatma",
   parents: "Bapak Bayu Mahatma Saputra & Ibu Linda Ismiyati Lestari",
   dateFormatted: "Minggu, 27 September 2026",
-  timeFormatted: "Pukul 09.00 WITA s/d Selesai",
+  timeFormatted: "Pukul 10.00 WITA s/d Selesai",
   locationName: "Kediaman Keluarga",
   locationAddress: "BTN SEKAR ANYER BLOK E NO.19, Kelurahan Sekarteja, Kec. Selong, Kab. Lombok Timur",
   googleMapsUrl: "https://www.google.com/maps/dir/?api=1&destination=BTN+SEKAR+ANYER+BLOK+E+NO.19+Kelurahan+Sekarteja+Kec.+Selong+Kab.+Lombok+Timur",
-  // Target: 2026-09-27 09:00:00 WITA (UTC+8) -> 2026-09-27T01:00:00.000Z
-  startDateIso: "2026-09-27T09:00:00+08:00",
-  endDateIso: "2026-09-27T14:00:00+08:00",
-  // For Google Calendar ISO UTC string: 20260927T010000Z/20260927T060000Z
-  gCalDates: "20260927T010000Z/20260927T060000Z",
+  // Target: 2026-09-27 10:00:00 WITA (UTC+8) -> 2026-09-27T02:00:00.000Z
+  startDateIso: "2026-09-27T10:00:00+08:00",
+  endDateIso: "2026-09-27T15:00:00+08:00",
+  // For Google Calendar ISO UTC string: 20260927T020000Z/20260927T070000Z
+  gCalDates: "20260927T020000Z/20260927T070000Z",
 };
 
 export function getGoogleCalendarUrl(): string {
@@ -40,8 +40,8 @@ export function downloadIcsFile() {
     `SUMMARY:${EVENT_DETAILS.title}`,
     `DESCRIPTION:Tasyakuran Walimatul 'Aqiqah & Khitan ananda Muhamad Juandra Mahatma (Putra dari ${EVENT_DETAILS.parents})`,
     `LOCATION:${EVENT_DETAILS.locationAddress}`,
-    "DTSTART:20260927T010000Z",
-    "DTEND:20260927T060000Z",
+    "DTSTART:20260927T020000Z",
+    "DTEND:20260927T070000Z",
     "STATUS:CONFIRMED",
     "SEQUENCE:0",
     "END:VEVENT",

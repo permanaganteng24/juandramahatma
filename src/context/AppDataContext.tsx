@@ -9,17 +9,16 @@ import type {
   WishItem,
 } from '../types/database';
 
-// Import default stock photographs
-import photoWhitePeci from '../assets/images/juandra_white_koko_1790146608476.jpg';
-import photoBlackPeci from '../assets/images/juandra_tummy_peci_1790146621385.jpg';
-import photoSleeping from '../assets/images/baby_sleeping_serene_1790145405712.jpg';
-import photoHands from '../assets/images/baby_tiny_feet_hands_1790145423471.jpg';
+// Import default photographs
+import photoWhitePeci from '../assets/images/juandra_peci_putih.jpg';
+import photoBlackPeci from '../assets/images/juandra_peci_hitam.jpg';
+import photoAqiqahKufi from '../assets/images/baby_juanda_aqiqah_1790145386644.jpg';
 
-const LOCAL_STORAGE_KEY = 'juandra_aqiqah_app_db_v1';
+const LOCAL_STORAGE_KEY = 'juandra_aqiqah_app_db_v6';
 const API_URL = '/api/database';
 
 export const INITIAL_DATABASE: AppDatabase = {
-  version: 1,
+  version: 4,
   lastUpdated: new Date().toISOString(),
   adminPin: '2709', // Default PIN for admin panel
   baby: {
@@ -50,8 +49,8 @@ export const INITIAL_DATABASE: AppDatabase = {
   event: {
     title: "Tasyakuran Walimatul 'Aqiqah & Khitan Muhamad Juandra Mahatma",
     dateFormatted: 'Minggu, 27 September 2026',
-    timeFormatted: 'Pukul 09.00 WITA s/d Selesai',
-    targetIsoDate: '2026-09-27T09:00:00+08:00',
+    timeFormatted: 'Pukul 10.00 WITA s/d Selesai',
+    targetIsoDate: '2026-09-27T10:00:00+08:00',
     locationName: 'Kediaman Keluarga Mahatma',
     locationAddress:
       'BTN SEKAR ANYER BLOK E NO.19, Kelurahan Sekarteja, Kec. Selong, Kab. Lombok Timur',
@@ -69,7 +68,7 @@ export const INITIAL_DATABASE: AppDatabase = {
       id: 'cover-1',
       src: photoWhitePeci,
       label: 'Peci Putih',
-      alt: 'Muhamad Juandra Mahatma - Berbusana Putih & Peci Putih',
+      alt: 'Muhamad Juandra Mahatma - Berbusana Koko Putih & Peci Putih',
     },
     {
       id: 'cover-2',
@@ -83,7 +82,7 @@ export const INITIAL_DATABASE: AppDatabase = {
       id: 'gal-1',
       src: photoWhitePeci,
       title: 'Ananda Muhamad Juandra Mahatma',
-      caption: 'Potret ananda Juandra berbusana putih dan peci putih di atas motif islami',
+      caption: 'Potret ananda Juandra berbusana koko putih dan peci putih',
     },
     {
       id: 'gal-2',
@@ -93,15 +92,9 @@ export const INITIAL_DATABASE: AppDatabase = {
     },
     {
       id: 'gal-3',
-      src: photoSleeping,
-      title: 'Tidur Lelap Penuh Ketenangan',
-      caption: 'Momen damai ananda tertidur lelap dalam dekapan doa orang tua',
-    },
-    {
-      id: 'gal-4',
-      src: photoHands,
-      title: 'Genggaman Kasih Ayah & Bunda',
-      caption: 'Jemari mungil Juandra dalam genggaman hangat cinta keluarga',
+      src: photoAqiqahKufi,
+      title: 'Doa & Keberkahan Aqiqah',
+      caption: 'Momen penuh kehangatan dan doa tasyakuran ananda Juandra',
     },
   ],
   wishes: [
@@ -166,6 +159,7 @@ interface AppDataContextType {
   exportDatabaseJson: () => void;
   importDatabaseJson: (jsonString: string) => boolean;
   resetToDefault: () => void;
+  uploadPhotoToServer: (file: File, filename?: string) => Promise<{ success: boolean; url?: string; error?: string }>;
 }
 
 const AppDataContext = createContext<AppDataContextType | undefined>(undefined);
@@ -186,6 +180,19 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
           parsed.event.locationAddress = INITIAL_DATABASE.event.locationAddress;
           parsed.event.googleMapsUrl = INITIAL_DATABASE.event.googleMapsUrl;
         }
+        if (parsed.event?.timeFormatted?.includes('09.00')) {
+          parsed.event.timeFormatted = INITIAL_DATABASE.event.timeFormatted;
+          parsed.event.targetIsoDate = INITIAL_DATABASE.event.targetIsoDate;
+        }
+        // Cleanse photos if they contain obsolete /uploads/ paths or old placeholder dummy photos
+        const cleanCoverPhotos = (parsed.coverPhotos && parsed.coverPhotos.length > 0 && !parsed.coverPhotos.some((p: any) => p.src?.includes('/uploads/')))
+          ? parsed.coverPhotos
+          : INITIAL_DATABASE.coverPhotos;
+
+        const cleanGalleryPhotos = (parsed.galleryPhotos && parsed.galleryPhotos.length > 0 && !parsed.galleryPhotos.some((p: any) => p.src?.includes('/uploads/') || p.src?.includes('sleeping')))
+          ? parsed.galleryPhotos
+          : INITIAL_DATABASE.galleryPhotos;
+
         setDb((prev) => ({
           ...prev,
           ...parsed,
@@ -193,8 +200,8 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
           baby: { ...prev.baby, ...(parsed.baby || {}) },
           event: { ...prev.event, ...(parsed.event || {}) },
           dana: { ...prev.dana, ...(parsed.dana || {}) },
-          coverPhotos: parsed.coverPhotos?.length ? parsed.coverPhotos : prev.coverPhotos,
-          galleryPhotos: parsed.galleryPhotos?.length ? parsed.galleryPhotos : prev.galleryPhotos,
+          coverPhotos: cleanCoverPhotos,
+          galleryPhotos: cleanGalleryPhotos,
           wishes: parsed.wishes?.length ? parsed.wishes : prev.wishes,
         }));
       }
@@ -495,6 +502,39 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   }, [commitDb]);
 
+  const uploadPhotoToServer = useCallback(
+    async (file: File, filename?: string): Promise<{ success: boolean; url?: string; error?: string }> => {
+      try {
+        const dataUrl = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+
+        const res = await fetch('/api/upload-photo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            dataUrl,
+            filename: filename || file.name,
+          }),
+        });
+
+        if (!res.ok) {
+          throw new Error('Gagal mengunggah foto ke server');
+        }
+
+        const data = await res.json();
+        return { success: true, url: data.url };
+      } catch (err: any) {
+        console.error('Upload photo error:', err);
+        return { success: false, error: err?.message || 'Gagal mengunggah foto ke server' };
+      }
+    },
+    []
+  );
+
   return (
     <AppDataContext.Provider
       value={{
@@ -518,6 +558,7 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
         exportDatabaseJson,
         importDatabaseJson,
         resetToDefault,
+        uploadPhotoToServer,
       }}
     >
       {children}

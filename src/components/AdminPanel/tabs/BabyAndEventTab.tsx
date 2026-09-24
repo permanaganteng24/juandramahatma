@@ -117,7 +117,7 @@ export const BabyAndEventTab: React.FC = () => {
               type="text"
               value={eventForm.timeFormatted}
               onChange={(e) => setEventForm({ ...eventForm, timeFormatted: e.target.value })}
-              placeholder="Contoh: Pukul 09.00 WITA s/d Selesai"
+              placeholder="Contoh: Pukul 10.00 WITA s/d Selesai"
               className="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-sky-500"
               required
             />

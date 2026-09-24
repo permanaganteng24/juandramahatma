@@ -1,0 +1,119 @@
+{
+  "version": 2,
+  "lastUpdated": "2026-09-24T07:13:56.912Z",
+  "adminPin": "2709",
+  "baby": {
+    "fullName": "Muhamad Juandra Mahatma",
+    "fatherName": "Bapak Bayu Mahatma Saputra",
+    "motherName": "Ibu Linda Ismiyati Lestari",
+    "greetingText": "Assalamu'alaikum Warahmatullahi Wabarakatuh",
+    "prayerQuote": "Semoga ananda tumbuh menjadi anak yang sholeh, cerdas, berbakti kepada orang tua, serta membawa berkah bagi agama dan keluarga. Aamiin.",
+    "meaningParts": [
+      {
+        "id": 1,
+        "title": "Muhamad",
+        "description": "Terpuji, meneladani akhlak mulia dan keluhuran budi pekerti Baginda Rasulullah SAW."
+      },
+      {
+        "id": 2,
+        "title": "Juandra",
+        "description": "Pemberani, tangguh, berpendirian teguh, dan pejuang kebaikan di setiap langkah hidupnya."
+      },
+      {
+        "id": 3,
+        "title": "Mahatma",
+        "description": "Berjiwa agung, bijaksana, mulia budi pekertinya, serta senantiasa mengayomi sesama."
+      }
+    ]
+  },
+  "event": {
+    "title": "Tasyakuran Walimatul 'Aqiqah & Khitan Muhamad Juandra Mahatma",
+    "dateFormatted": "Minggu, 27 September 2026",
+    "timeFormatted": "Pukul 10.00 WITA s/d Selesai",
+    "targetIsoDate": "2026-09-27T10:00:00+08:00",
+    "locationName": "Kediaman Keluarga Mahatma",
+    "locationAddress": "BTN SEKAR ANYER BLOK E NO.19, Kelurahan Sekarteja, Kec. Selong, Kab. Lombok Timur",
+    "googleMapsUrl": "https://www.google.com/maps/dir/?api=1&destination=BTN+SEKAR+ANYER+BLOK+E+NO.19+Kelurahan+Sekarteja+Kec.+Selong+Kab.+Lombok+Timur"
+  },
+  "dana": {
+    "accountNumber": "082135134688",
+    "accountHolder": "BAYU MAHATMA SAPUTRA",
+    "badge": "DANA E-Wallet",
+    "receiverNote": "Penerima kado/hadiah fisik: Bapak Bayu Mahatma Saputra (082135134688)"
+  },
+  "coverPhotos": [
+    {
+      "id": "cover-1",
+      "src": "/images/juandra_peci_putih.jpg",
+      "label": "Peci Putih",
+      "alt": "Muhamad Juandra Mahatma - Berbusana Koko Putih & Peci Putih"
+    },
+    {
+      "id": "cover-2",
+      "src": "/images/juandra_peci_hitam.jpg",
+      "label": "Peci Hitam",
+      "alt": "Muhamad Juandra Mahatma - Senyum Ceria & Peci Hitam"
+    }
+  ],
+  "galleryPhotos": [
+    {
+      "src": "/uploads/8888_jpeg_1790233914358.jpg",
+      "title": "Potret Ananda Juandra",
+      "caption": "Momen penuh kebahagiaan ananda Juandra",
+      "id": "photo-1790233919036"
+    },
+    {
+      "id": "gal-1",
+      "src": "/images/juandra_peci_putih.jpg",
+      "title": "Ananda Muhamad Juandra Mahatma",
+      "caption": "Potret ananda Juandra berbusana koko putih dan peci putih"
+    },
+    {
+      "id": "gal-2",
+      "src": "/images/juandra_peci_hitam.jpg",
+      "title": "Senyum Ceria Tummy Time",
+      "caption": "Tawa menggemaskan ananda Juandra dengan peci songkok hitam berbordir emas"
+    },
+    {
+      "id": "gal-3",
+      "src": "/uploads/juandra_jpeg_1790234034208.jpg",
+      "title": "Doa & Keberkahan Aqiqah",
+      "caption": "Momen penuh kehangatan dan doa tasyakuran ananda Juandra"
+    }
+  ],
+  "wishes": [
+    {
+      "id": "wish-1",
+      "name": "Keluarga H. M. Ridwan",
+      "attendance": "hadir",
+      "message": "Barakallahu fiik ananda Juandra tercinta. Semoga senantiasa diberikan kesehatan, keteguhan iman, dan menjadi anak sholeh penyejuk hati kedua orang tua.",
+      "timestamp": "Baru saja",
+      "likes": 12,
+      "isPinned": true
+    },
+    {
+      "id": "wish-2",
+      "name": "Tante Farah & Om Dimas",
+      "attendance": "insya_allah",
+      "message": "Selamat atas khitanan dan aqiqahnya Juandra! Semoga lekas pulih, cerdas, berbakti, dan tercapai semua cita-cita muliamu ya nak. Aamiin ya Rabbal Alamin.",
+      "timestamp": "1 jam yang lalu",
+      "likes": 9
+    },
+    {
+      "id": "wish-3",
+      "name": "Ustadz Ahmad Fauzan & Keluarga",
+      "attendance": "hadir",
+      "message": "Mabruk alfa mabruk atas aqiqah & khitan ananda Muhamad Juandra Mahatma. Semoga menjadi pembuka pintu surga bagi ayah bundanya, cerdas dan istiqomah di jalan Allah.",
+      "timestamp": "2 jam yang lalu",
+      "likes": 15
+    },
+    {
+      "id": "wish-4",
+      "name": "dr. Hendra & Mbak Sari",
+      "attendance": "hadir",
+      "message": "Alhamdulillah selamat untuk Mas Bayu & Mbak Linda. Doa terbaik kami untuk baby Juandra tercinta, semoga sehat selalu dan tumbuh cerdas.",
+      "timestamp": "4 jam yang lalu",
+      "likes": 8
+    }
+  ]
+}

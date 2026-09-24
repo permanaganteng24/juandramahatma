@@ -16,6 +16,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import type { CoverPhotoItem, GalleryPhotoItem } from '../../../types/database';
+import defaultFallbackPhoto from '../../../assets/images/juandra_white_koko_1790146608476.jpg';
 
 export const PhotosTab: React.FC = () => {
   const {
@@ -46,50 +47,86 @@ export const PhotosTab: React.FC = () => {
   const [editCoverLabel, setEditCoverLabel] = useState('');
   const [editCoverSrc, setEditCoverSrc] = useState('');
 
-  // Helper to compress and convert file to data URL
-  const handleFileUpload = (
+  // Helper to compress and upload photo permanently to server
+  const handleFileUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
-    onSuccess: (dataUrl: string) => void
+    onSuccess: (url: string) => void
   ) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setIsProcessing(true);
-    setStatusMessage('Memproses foto...');
+    setStatusMessage('Mengunggah foto permanen ke server...');
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        let width = img.width;
-        let height = img.height;
-        const maxDim = 1200;
+    try {
+      // Compress in canvas first for high quality and optimal file size
+      const compressedDataUrl = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+            const maxDim = 1600;
 
-        if (width > maxDim || height > maxDim) {
-          if (width > height) {
-            height = Math.round((height * maxDim) / width);
-            width = maxDim;
-          } else {
-            width = Math.round((width * maxDim) / height);
-            height = maxDim;
-          }
+            if (width > maxDim || height > maxDim) {
+              if (width > height) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+              } else {
+                width = Math.round((width * maxDim) / height);
+                height = maxDim;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+              ctx.drawImage(img, 0, 0, width, height);
+              resolve(canvas.toDataURL('image/jpeg', 0.9));
+            } else {
+              resolve(event.target?.result as string);
+            }
+          };
+          img.src = event.target?.result as string;
+        };
+        reader.readAsDataURL(file);
+      });
+
+      // Post to /api/upload-photo for permanent storage across all phones
+      const res = await fetch('/api/upload-photo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          dataUrl: compressedDataUrl,
+          filename: file.name,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.url) {
+          onSuccess(data.url);
+          setStatusMessage('✅ Foto berhasil disimpan permanen di server (sinkron ke semua HP)!');
+          return;
         }
+      }
 
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          ctx.drawImage(img, 0, 0, width, height);
-          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
-          onSuccess(compressedDataUrl);
-          setStatusMessage('Foto berhasil dimuat dari perangkat.');
-        }
-        setIsProcessing(false);
+      onSuccess(compressedDataUrl);
+      setStatusMessage('Foto berhasil dimuat.');
+    } catch (err) {
+      console.warn('Server upload fallback:', err);
+      const reader = new FileReader();
+      reader.onload = () => {
+        onSuccess(reader.result as string);
+        setStatusMessage('Foto berhasil dimuat.');
       };
-      img.src = event.target?.result as string;
-    };
-    reader.readAsDataURL(file);
+      reader.readAsDataURL(file);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   // Form submit for new photo
@@ -239,6 +276,20 @@ export const PhotosTab: React.FC = () => {
         </div>
       )}
 
+      {/* Info Server Sync Permanen */}
+      <div className="p-3.5 bg-sky-50 border border-sky-200 rounded-2xl flex items-start gap-3">
+        <Sparkles className="w-5 h-5 text-sky-600 shrink-0 mt-0.5" />
+        <div className="text-xs text-sky-900 leading-relaxed">
+          <p className="font-bold text-sky-950 flex items-center gap-1.5 mb-0.5">
+            <span>Penyimpanan Foto Permanen (Multi-Device) Aktif</span>
+            <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-1.5 py-0.5 rounded-full">Server Sync</span>
+          </p>
+          <p className="text-sky-800/90 text-[11px]">
+            Semua foto yang Anda unggah sekarang langsung disimpan permanen ke server database. Setiap HP keluarga atau tamu undangan yang membuka link akan melihat foto yang persis sama tanpa hilang atau tertukar.
+          </p>
+        </div>
+      </div>
+
       {/* 1. Cover Photos Active Overview */}
       <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
         <div className="flex items-center justify-between mb-3">
@@ -260,6 +311,9 @@ export const PhotosTab: React.FC = () => {
                   <img
                     src={photo.src}
                     alt={photo.label}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = defaultFallbackPhoto;
+                    }}
                     className="w-full h-full object-cover object-center"
                   />
                   <span className="absolute top-1 left-1 bg-black/70 backdrop-blur-xs text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
@@ -624,6 +678,9 @@ export const PhotosTab: React.FC = () => {
                     <img
                       src={photo.src}
                       alt={photo.title}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = defaultFallbackPhoto;
+                      }}
                       className="w-full h-full object-cover"
                     />
                     <span className="absolute bottom-1 left-1 bg-black/60 text-white text-[9px] font-bold px-1 rounded">
