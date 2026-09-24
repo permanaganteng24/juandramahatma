@@ -216,8 +216,17 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
         if (res.ok) {
           const json = await res.json();
           if (json.success && json.data) {
-            setDb(json.data);
-            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(json.data));
+            const remoteDb = json.data;
+            if (remoteDb.event?.timeFormatted?.includes('09.00')) {
+              remoteDb.event.timeFormatted = INITIAL_DATABASE.event.timeFormatted;
+              remoteDb.event.targetIsoDate = INITIAL_DATABASE.event.targetIsoDate;
+            }
+            if (remoteDb.event?.locationAddress?.includes('Zainuddin') || remoteDb.event?.locationAddress?.includes('Pancor')) {
+              remoteDb.event.locationAddress = INITIAL_DATABASE.event.locationAddress;
+              remoteDb.event.googleMapsUrl = INITIAL_DATABASE.event.googleMapsUrl;
+            }
+            setDb(remoteDb);
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(remoteDb));
             setSyncStatus('synced');
           }
         }

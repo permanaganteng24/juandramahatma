@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Share2, MessageCircle, Copy, Check, Sparkles } from 'lucide-react';
 import { generateWhatsAppShareUrl } from '../utils/calendar';
+import { useAppData } from '../context/AppDataContext';
 
 export const ShareLinkGenerator: React.FC = () => {
+  const { db } = useAppData();
   const [recipient, setRecipient] = useState<string>('');
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
 
@@ -19,7 +21,13 @@ export const ShareLinkGenerator: React.FC = () => {
   };
 
   const handleOpenWhatsApp = () => {
-    const url = generateWhatsAppShareUrl(recipient || 'Bapak/Ibu/Saudara/i');
+    const url = generateWhatsAppShareUrl(recipient || 'Bapak/Ibu/Saudara/i', getPersonalizedUrl(), {
+      babyName: db.baby?.fullName,
+      parents: `Bapak ${db.baby?.fatherName} & Ibu ${db.baby?.motherName}`,
+      dateFormatted: db.event?.dateFormatted,
+      timeFormatted: db.event?.timeFormatted,
+      locationAddress: db.event?.locationAddress,
+    });
     window.open(url, '_blank');
   };
 

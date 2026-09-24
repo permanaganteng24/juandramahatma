@@ -59,10 +59,29 @@ export function downloadIcsFile() {
   window.URL.revokeObjectURL(url);
 }
 
-export function generateWhatsAppShareUrl(guestName: string, customAppUrl?: string): string {
+export interface ShareEventDetails {
+  babyName?: string;
+  parents?: string;
+  dateFormatted?: string;
+  timeFormatted?: string;
+  locationAddress?: string;
+}
+
+export function generateWhatsAppShareUrl(guestName: string, customAppUrl?: string, details?: ShareEventDetails): string {
   const baseUrl = customAppUrl || window.location.origin + window.location.pathname;
-  const inviteUrl = `${baseUrl}?to=${encodeURIComponent(guestName.trim())}`;
+  const inviteUrl = customAppUrl && customAppUrl.includes('?to=') 
+    ? customAppUrl 
+    : `${baseUrl}?to=${encodeURIComponent(guestName.trim())}`;
   
+  const baby = details?.babyName || EVENT_DETAILS.babyName;
+  const parents = details?.parents || EVENT_DETAILS.parents;
+  const dateStr = details?.dateFormatted || EVENT_DETAILS.dateFormatted;
+  let timeStr = details?.timeFormatted || EVENT_DETAILS.timeFormatted;
+  if (timeStr.includes('09.00')) {
+    timeStr = timeStr.replace('09.00', '10.00');
+  }
+  const address = details?.locationAddress || EVENT_DETAILS.locationAddress;
+
   const text = `Assalamu'alaikum Warahmatullahi Wabarakatuh.
 
 Kepada Yth.
@@ -70,12 +89,12 @@ Kepada Yth.
 
 Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i sekalian untuk hadir dalam acara *Tasyakuran Walimatul 'Aqiqah & Khitan* putra kami tercinta:
 
-👶 *Muhamad Juandra Mahatma*
-(Putra dari ${EVENT_DETAILS.parents})
+👶 *${baby}*
+(Putra dari ${parents})
 
-🗓 *Hari/Tanggal:* ${EVENT_DETAILS.dateFormatted}
-⏰ *Waktu:* ${EVENT_DETAILS.timeFormatted}
-📍 *Lokasi:* ${EVENT_DETAILS.locationAddress}
+🗓 *Hari/Tanggal:* ${dateStr}
+⏰ *Waktu:* ${timeStr}
+📍 *Lokasi:* ${address}
 
 Detail undangan & konfirmasi kehadiran dapat diakses melalui tautan berikut:
 👉 ${inviteUrl}
@@ -83,7 +102,7 @@ Detail undangan & konfirmasi kehadiran dapat diakses melalui tautan berikut:
 Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir serta memberikan doa restu.
 
 Wassalamu'alaikum Warahmatullahi Wabarakatuh.
-_Keluarga Bayu Mahatma Saputra & Linda Ismiyati Lestari_`;
+_Keluarga ${parents.replace(/Bapak\s+|Ibu\s+/g, '')}_`;
 
   return `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
 }
